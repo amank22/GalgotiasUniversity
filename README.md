@@ -1,4 +1,3 @@
-
 ![alt tag](https://github.com/amank22/GalgotiasUniversity/raw/master/res/drawable-nodpi/ts_gu8.jpg)
 
 Redesign of the old "Galgotias University" app.
