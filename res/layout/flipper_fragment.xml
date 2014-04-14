@@ -1,0 +1,77 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity"
+    tools:ignore="ContentDescription" 
+    android:background="#000">
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/swiperight" />
+
+    <ViewFlipper
+        android:id="@+id/view_flipper_top"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:autoStart="true"
+        android:flipInterval="3000"
+        android:inAnimation="@anim/push_down_in"
+        android:outAnimation="@anim/push_down_out" >
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center"
+            android:text="@string/flipper_text_1"
+            android:textColor="#f8a20f"
+            android:textSize="@dimen/flipper_text_large" />
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center"
+            android:text="@string/flipper_text_2"
+            android:textColor="#33B5E5"
+            android:textSize="@dimen/flipper_text_large" />
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center"
+            android:text="@string/flipper_text_3"
+            android:textColor="#AA66CC"
+            android:textSize="@dimen/flipper_text_medium" />
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center"
+            android:text="@string/flipper_text_4"
+            android:textColor="#fe68CC"
+            android:textSize="@dimen/flipper_text_large" />
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center"
+            android:text="@string/flipper_text_5"
+            android:textColor="#0099CC"
+            android:textSize="@dimen/flipper_text_large" />
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center"
+            android:text="@string/flipper_text_6"
+            android:textColor="#FF8800"
+            android:textSize="@dimen/flipper_text_large" />
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center"
+            android:text="@string/flipper_text_7"
+            android:textColor="#FF4444"
+            android:textSize="@dimen/flipper_text_large" />
+        
+    </ViewFlipper>
+
+</RelativeLayout>

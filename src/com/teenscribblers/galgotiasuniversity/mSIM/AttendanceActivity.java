@@ -1,0 +1,359 @@
+package com.teenscribblers.galgotiasuniversity.mSIM;
+
+import java.util.ArrayList;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Typeface;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.app.NavUtils;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.teenscribblers.galgotiasuniversity.AlertDialogManager;
+import com.teenscribblers.galgotiasuniversity.Connection_detect;
+import com.teenscribblers.galgotiasuniversity.R;
+
+public class AttendanceActivity extends SherlockActivity {
+	ProgressDialog p;
+	String type, typevalue;
+	int count = 0;
+	String[][] data;
+	private CardsAdapter adapter;
+	ListView list;
+	SessionManagment session;
+	private AdView mAdView1;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_attendance);
+		session = new SessionManagment(AttendanceActivity.this);
+		session.checkLogin();
+		Connection_detect cd = new Connection_detect(getApplicationContext());
+		Boolean isInternetPresent = cd.isConnectingToInternet();
+		if (!isInternetPresent) {
+			Intent i = new Intent(AttendanceActivity.this, LoginActivity.class);
+			startActivity(i);
+
+		}
+		// Show the Up button in the action bar.
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		String[] content = getIntent().getStringArrayExtra("type_key");
+		type = content[0];
+		typevalue = content[1];
+		list = (ListView) findViewById(R.id.listView_attendance);
+		if(savedInstanceState!=null){
+			data=(String[][]) savedInstanceState.getSerializable("data_array");
+			count=savedInstanceState.getInt("count");
+			adapter = new CardsAdapter(getBaseContext(),
+					android.R.layout.simple_list_item_1);
+			list.setAdapter(adapter);
+		}
+		else
+		new Attendance().execute();
+		mAdView1 = (AdView) findViewById(R.id.adView_att_1);
+		mAdView1.setAdListener(new ToastAdListener(this));
+
+		mAdView1.loadAd(new AdRequest.Builder().build());
+
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		// TODO Auto-generated method stub
+		super.onSaveInstanceState(outState);
+		outState.putSerializable("data_array", data);
+		outState.putInt("count", count);
+	}
+
+	public class Attendance extends AsyncTask<String, Void, String> {
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			p = new ProgressDialog(AttendanceActivity.this);
+			p.setMessage("Finding Your Attendance..");
+			p.setCancelable(false);
+			p.show();
+		}
+
+		@Override
+		protected String doInBackground(String... params) {
+			String s = Attendance();
+			Document doc = Jsoup.parse(s);
+
+			Elements table = doc.select("table");
+			for (Element row : table.select("tr")) {
+				count++;
+			}
+			for (Element row : table.select("tr")) {
+				for (Element heading : row.select("th")) {
+					Log.d("heading", heading.text());
+				}
+			}
+			data = new String[count][9];
+			int i = 0;
+			for (Element row : table.select("tr")) {
+				int j = 0;
+				for (Element column : row.select("td")) {
+					if (!column.text().equals(""))
+						data[i][j] = column.text();
+
+					j++;
+				}
+				i++;
+			}
+			return s;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+			p.dismiss();
+			if (result.equals("Error")) {
+				AlertDialogManager a = new AlertDialogManager();
+				a.showAlertDialog(AttendanceActivity.this, "Error!",
+						"Please Login Again!");
+			} else {
+				adapter = new CardsAdapter(getBaseContext(),
+						android.R.layout.simple_list_item_1);
+				list.setAdapter(adapter);
+			}
+		}
+
+	}
+
+	String Attendance() {
+		UrlConnectionMethods u = new UrlConnectionMethods(
+				getApplicationContext());
+		String p = u.get(UrlConnectionParms.AttendanceString);
+		// Log.e("Atten", p);
+		Document document = Jsoup.parse(p);
+		UrlConnectionParms.viewstate = document.select("#__VIEWSTATE").attr(
+				"value");
+		UrlConnectionParms.eventvalidate = document
+				.select("#__EVENTVALIDATION").attr("value");
+
+		ArrayList<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
+		nameValuePair.add(new BasicNameValuePair("__EVENTTARGET", ""));
+		nameValuePair.add(new BasicNameValuePair("__EVENTARGUMENT", ""));
+		nameValuePair.add(new BasicNameValuePair("__VIEWSTATE",
+				UrlConnectionParms.viewstate));
+		nameValuePair.add(new BasicNameValuePair("__LASTFOCUS", ""));
+		nameValuePair.add(new BasicNameValuePair("ctl00$ctl00$txtCaseCSS",
+				"textDefault"));
+		nameValuePair.add(new BasicNameValuePair("__EVENTVALIDATION",
+				UrlConnectionParms.eventvalidate));
+		nameValuePair.add(new BasicNameValuePair(
+				"ctl00$ctl00$MCPH1$SCPH$hdnStudentId", "1241"));
+		nameValuePair.add(new BasicNameValuePair(type, typevalue));
+		nameValuePair.add(new BasicNameValuePair(
+				"ctl00$ctl00$MCPH1$SCPH$txtFrom", ""));
+		nameValuePair.add(new BasicNameValuePair(
+				"ctl00$ctl00$MCPH1$SCPH$txtTo", ""));
+
+		String s = u
+				.Posturl(nameValuePair, UrlConnectionParms.AttendanceString);
+
+		return s;
+	}
+
+	// custom adapter
+	public class CardsAdapter extends ArrayAdapter<String> {
+
+		public TextView subject, present, absent, total, percentage, timeslot,
+				atttype, status, sem;
+
+		public CardsAdapter(Context context, int textViewResourceId) {
+			super(context, textViewResourceId);
+			// TODO Auto-generated constructor stub
+		}
+
+		private int lastPosition = -1;
+		Typeface newsfont = Typeface.createFromAsset(getContext().getAssets(),
+				"Adec.ttf");
+
+		@Override
+		public int getCount() {
+			// TODO Auto-generated method stub
+			return count;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+
+			View row = convertView;
+			if (typevalue.equals("Today Attendance") == false
+					&& typevalue.equals("Semester Attendance") == false) {
+
+				if (row == null) {
+
+					row = getLayoutInflater().inflate(
+							R.layout.attendance_list_item, parent, false);
+				}
+
+				subject = (TextView) row.findViewById(R.id.textView_subject);
+				total = (TextView) row.findViewById(R.id.textView_total);
+				present = (TextView) row.findViewById(R.id.textView_present);
+				absent = (TextView) row.findViewById(R.id.textView_absent);
+				percentage = (TextView) row.findViewById(R.id.textView_perc);
+				// setting font
+				subject.setTypeface(newsfont);
+				total.setTypeface(newsfont);
+				present.setTypeface(newsfont);
+				absent.setTypeface(newsfont);
+				percentage.setTypeface(newsfont);
+				// setting text data
+				if (position != 0) {
+					subject.setText(data[position][4]);
+					total.setText(data[position][7]);
+					present.setText(data[position][5]);
+					absent.setText(data[position][6]);
+					percentage.setText(data[position][8]);
+					
+				} else {
+					subject.setText("Subject");
+					total.setText("T");
+					present.setText("P");
+					absent.setText("A");
+					percentage.setText("%");
+				}
+			} else if (typevalue.equals("Today Attendance")) {
+
+				if (row == null) {
+
+					row = getLayoutInflater().inflate(R.layout.todayslistitem,
+							parent, false);
+				}
+				subject = (TextView) row.findViewById(R.id.textView_subject);
+				timeslot = (TextView) row.findViewById(R.id.textView_time_slot);
+				atttype = (TextView) row.findViewById(R.id.textView_class_type);
+				status = (TextView) row.findViewById(R.id.textView_status);
+				// setting font
+				subject.setTypeface(newsfont);
+				timeslot.setTypeface(newsfont);
+				atttype.setTypeface(newsfont);
+				status.setTypeface(newsfont);
+				// setting text data
+				if (position != 0) {
+					subject.setText(data[position][4]);
+					timeslot.setText(data[position][5]);
+					atttype.setText(data[position][6]);
+					status.setText(data[position][7]);
+				} else {
+					subject.setText("Subject");
+					timeslot.setText("Time Slot");
+					atttype.setText("Class Type");
+					status.setText("Status");
+				}
+
+			} else {
+				if (row == null) {
+
+					row = getLayoutInflater().inflate(
+							R.layout.attendance_list_item, parent, false);
+				}
+
+				sem = (TextView) row.findViewById(R.id.textView_subject);
+				total = (TextView) row.findViewById(R.id.textView_total);
+				present = (TextView) row.findViewById(R.id.textView_present);
+				absent = (TextView) row.findViewById(R.id.textView_absent);
+				percentage = (TextView) row.findViewById(R.id.textView_perc);
+				// setting font
+				sem.setTypeface(newsfont);
+				total.setTypeface(newsfont);
+				present.setTypeface(newsfont);
+				absent.setTypeface(newsfont);
+				percentage.setTypeface(newsfont);
+				// setting text data
+				if (position != 0) {
+					sem.setText(data[position][3]);
+					total.setText(data[position][6]);
+					present.setText(data[position][4]);
+					absent.setText(data[position][5]);
+					percentage.setText(data[position][7]);
+
+				} else {
+					sem.setText("Semester");
+					total.setText("T");
+					present.setText("P");
+					absent.setText("A");
+					percentage.setText("%");
+				}
+			}
+			Animation animation = AnimationUtils.loadAnimation(
+					getBaseContext(),
+					(position > lastPosition) ? R.anim.up_from_bottom
+							: R.anim.down_from_top);
+			row.startAnimation(animation);
+			lastPosition = position;
+			return row;
+		}
+
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getSupportMenuInflater().inflate(R.menu.user, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			NavUtils.navigateUpFromSameTask(this);
+			return true;
+		case R.id.action_logout:
+			session.logoutUser();
+			Intent i = new Intent(AttendanceActivity.this, LoginActivity.class);
+			startActivity(i);
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		mAdView1.pause();
+
+		super.onPause();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		mAdView1.resume();
+
+	}
+
+	@Override
+	protected void onDestroy() {
+		mAdView1.destroy();
+
+		super.onDestroy();
+	}
+
+}
