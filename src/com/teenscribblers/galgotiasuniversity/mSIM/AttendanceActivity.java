@@ -55,7 +55,6 @@ public class AttendanceActivity extends SherlockActivity {
 		if (!isInternetPresent) {
 			Intent i = new Intent(AttendanceActivity.this, LoginActivity.class);
 			startActivity(i);
-
 		}
 		// Show the Up button in the action bar.
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -63,22 +62,22 @@ public class AttendanceActivity extends SherlockActivity {
 		type = content[0];
 		typevalue = content[1];
 		list = (ListView) findViewById(R.id.listView_attendance);
-		if(savedInstanceState!=null){
-			data=(String[][]) savedInstanceState.getSerializable("data_array");
-			count=savedInstanceState.getInt("count");
+		if (savedInstanceState != null) {
+			data = (String[][]) savedInstanceState
+					.getSerializable("data_array");
+			count = savedInstanceState.getInt("count");
 			adapter = new CardsAdapter(getBaseContext(),
 					android.R.layout.simple_list_item_1);
 			list.setAdapter(adapter);
-		}
-		else
-		new Attendance().execute();
+		} else
+			new Attendance().execute();
 		mAdView1 = (AdView) findViewById(R.id.adView_att_1);
 		mAdView1.setAdListener(new ToastAdListener(this));
 
 		mAdView1.loadAd(new AdRequest.Builder().build());
 
 	}
-	
+
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		// TODO Auto-generated method stub
@@ -100,6 +99,9 @@ public class AttendanceActivity extends SherlockActivity {
 		@Override
 		protected String doInBackground(String... params) {
 			String s = Attendance();
+			if (s.equals("error")) {
+				return "Error";
+			}
 			Document doc = Jsoup.parse(s);
 
 			Elements table = doc.select("table");
@@ -131,9 +133,8 @@ public class AttendanceActivity extends SherlockActivity {
 			super.onPostExecute(result);
 			p.dismiss();
 			if (result.equals("Error")) {
-				AlertDialogManager a = new AlertDialogManager();
-				a.showAlertDialog(AttendanceActivity.this, "Error!",
-						"Please Login Again!");
+				AlertDialogManager.showAlertDialog(AttendanceActivity.this,
+						"Error!", "Please Login Again!");
 			} else {
 				adapter = new CardsAdapter(getBaseContext(),
 						android.R.layout.simple_list_item_1);
@@ -147,6 +148,9 @@ public class AttendanceActivity extends SherlockActivity {
 		UrlConnectionMethods u = new UrlConnectionMethods(
 				getApplicationContext());
 		String p = u.get(UrlConnectionParms.AttendanceString);
+		if (p.equals("error")) {
+			return "error";
+		}
 		// Log.e("Atten", p);
 		Document document = Jsoup.parse(p);
 		UrlConnectionParms.viewstate = document.select("#__VIEWSTATE").attr(
@@ -174,7 +178,9 @@ public class AttendanceActivity extends SherlockActivity {
 
 		String s = u
 				.Posturl(nameValuePair, UrlConnectionParms.AttendanceString);
-
+		if (s.equals("error")) {
+			return "error";
+		}
 		return s;
 	}
 
@@ -230,7 +236,7 @@ public class AttendanceActivity extends SherlockActivity {
 					present.setText(data[position][5]);
 					absent.setText(data[position][6]);
 					percentage.setText(data[position][8]);
-					
+
 				} else {
 					subject.setText("Subject");
 					total.setText("T");
@@ -338,7 +344,6 @@ public class AttendanceActivity extends SherlockActivity {
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		mAdView1.pause();
-
 		super.onPause();
 	}
 
@@ -352,7 +357,6 @@ public class AttendanceActivity extends SherlockActivity {
 	@Override
 	protected void onDestroy() {
 		mAdView1.destroy();
-
 		super.onDestroy();
 	}
 

@@ -36,7 +36,7 @@ public class ToastAdListener extends AdListener {
 			break;
 		}
 		Toast.makeText(mContext,
-				String.format("onAdFailedToLoad(%s)", errorReason),
+				String.format("Ad Failed To Load(%s)", errorReason),
 				Toast.LENGTH_SHORT).show();
 	}
 

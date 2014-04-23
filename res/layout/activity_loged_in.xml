@@ -31,12 +31,17 @@
             android:id="@+id/button_options"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Explore"
             android:layout_gravity="center_vertical"
-            android:background="@drawable/abs__toast_frame" 
-            android:textColor="#fff"/>
-
+            android:background="@drawable/abs__toast_frame"
+            android:text="Explore"
+            android:textColor="#fff" />
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#aa2a2a2a" />
+   
 
     <ProgressBar
         android:id="@+id/progressBar_personal"

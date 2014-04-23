@@ -13,8 +13,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import com.teenscribblers.galgotiasuniversity.AlertDialogManager;
-
 import android.content.Context;
 import android.util.Log;
 
@@ -23,35 +21,39 @@ public class UrlConnectionMethods {
 	private static UrlConnectionParms u;
 	private static boolean redirect;
 	private static SessionManagment session;
-	private Context context;
-	private static AlertDialogManager alertcreate;
 
 	public UrlConnectionMethods(Context context) {
 		// TODO Auto-generated constructor stub
 		u = new UrlConnectionParms(context);
 		session = new SessionManagment(context);
-		this.context = context;
 	}
 
 	public String LoginUrl(List<NameValuePair> nameValuePair, String url) {
 		Log.d("Tag_GU", "in post");
-		u.openconnect(url);
-		u.openconnect(url);
-		u.InitConnection("POST", url);
+		String status = "ok";
+		status = u.openconnect(url);
+		Log.d("STATUS", status);
+		if (!status.equals("ok"))
+			return "error";
+		status = u.InitConnection("POST", url);
+		Log.d("STATUS", status);
+		if (!status.equals("ok"))
+			return "error";
 		Log.d("Tag_GU", "after open");
 		OutputStream os = null;
 		BufferedWriter writer = null;
 		try {
 			os = UrlConnectionParms.httpurl.getOutputStream();
 		} catch (IOException e) {
-			alertcreate.showAlertDialog(context, "Error!", "Connection Error");
-			// e.printStackTrace();
+			e.printStackTrace();
+			return "error";
+
 		}
 		try {
 			writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
 		} catch (UnsupportedEncodingException e) {
-			alertcreate.showAlertDialog(context, "Error!", "Connection Error");
-			// e.printStackTrace();
+			e.printStackTrace();
+			return "error";
 		}
 		try {
 			writer.write(u.getWriterQuery(nameValuePair));
@@ -59,11 +61,14 @@ public class UrlConnectionMethods {
 			writer.close();
 			os.close();
 		} catch (IOException e) {
-			alertcreate.showAlertDialog(context, "Error!", "Connection Error");
-			// e.printStackTrace();
+			e.printStackTrace();
+			return "error";
 		}
-		u.connect();
-
+		status = u.connect();
+		if (!status.equals("ok"))
+			return "error";
+		// get the cookie
+		cookieextract();
 		redirect = u.checkredirect();
 		Log.d("Tag_GU", String.valueOf(redirect));
 		if (redirect) {
@@ -71,45 +76,50 @@ public class UrlConnectionMethods {
 			String newUrl = "http://122.160.168.158"
 					+ UrlConnectionParms.httpurl.getHeaderField("Location");
 			Log.d("Tag_GU", newUrl);
-			// get the cookie
-			if (UrlConnectionParms.cookie.isEmpty())
-				cookieextract();
 			// open the new connection again
-			u.openconnect(newUrl);
+			status = u.openconnect(newUrl);
+			if (!status.equals("ok"))
+				return "error";
+			session.createLoginSession(returncookie());
 			UrlConnectionParms.httpurl.setRequestProperty("Cookie",
 					returncookie());
 			Log.d("Tag_GU", "cookiestring=" + returncookie());
 			if (newUrl.equals(UrlConnectionParms.HomeString)) {
 				UrlConnectionParms.loginstat = true;
-				return null;
-			} else
+				return "ok";
+			} else {
 				UrlConnectionParms.loginstat = false;
-			u.connect();
+				return "error";
+			}
+
 		}
 
-		String s = u.Reader();
-		return s;
+		return "error";
 	}
 
 	public String Posturl(List<NameValuePair> nameValuePair, String url) {
 		Log.d("Tag_GU", "in post");
-		u.openconnect(url);
-		u.openconnect(url);
-		u.InitConnection("POST", url);
+		String status;
+		status = u.openconnect(url);
+		if (!status.equals("ok"))
+			return "error";
+		status = u.InitConnection("POST", url);
+		if (!status.equals("ok"))
+			return "error";
 		Log.d("Tag_GU", "after open");
 		OutputStream os = null;
 		BufferedWriter writer = null;
 		try {
 			os = UrlConnectionParms.httpurl.getOutputStream();
 		} catch (IOException e) {
-			alertcreate.showAlertDialog(context, "Error!", "Connection Error");
-			// e.printStackTrace();
+			e.printStackTrace();
+			return "error";
 		}
 		try {
 			writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
 		} catch (UnsupportedEncodingException e) {
-			alertcreate.showAlertDialog(context, "Error!", "Connection Error");
-			// e.printStackTrace();
+			e.printStackTrace();
+			return "error";
 		}
 		try {
 			writer.write(u.getWriterQuery(nameValuePair));
@@ -117,8 +127,9 @@ public class UrlConnectionMethods {
 			writer.close();
 			os.close();
 		} catch (IOException e) {
-			alertcreate.showAlertDialog(context, "Error!", "Connection Error");
-			// e.printStackTrace();
+			e.printStackTrace();
+			return "error";
+
 		}
 		u.connect();
 
@@ -138,21 +149,28 @@ public class UrlConnectionMethods {
 				cookieextract();
 
 			// open the new connection again
-			u.openconnect(newUrl);
+			status = u.openconnect(newUrl);
+			if (!status.equals("ok"))
+				return "error";
 			UrlConnectionParms.httpurl.setRequestProperty("Cookie",
 					returncookie());
 			Log.d("Tag_GU", "cookiestring=" + returncookie());
-			u.connect();
+			status = u.connect();
+			if (!status.equals("ok"))
+				return "error";
 		}
 		String s = u.Reader();
+		if (s.equals("error"))
+			return "error";
 		return s;
 	}
 
 	public String get(String url) {
 		Log.d("Tag_GU", "in get");
-		u.openconnect(url);
-		if (session.getCookie().equals(""))
-			session.createLoginSession(returncookie());
+		String status;
+		status = u.openconnect(url);
+		if (!status.equals("ok"))
+			return "error";
 		UrlConnectionParms.httpurl.setRequestProperty("Cookie",
 				session.getCookie());
 		Log.d("Tag_GU", "cookiestring=" + returncookie());
@@ -162,11 +180,13 @@ public class UrlConnectionMethods {
 						.getURL()
 						.toString()
 						.equals("http://122.160.168.158/iSIM/Login?Session=timeout")) {
-			return "Error";
+			return "error";
 		}
 		Log.d("Request Code att", String.valueOf(u.requestcode()));
 		Log.d("URL", UrlConnectionParms.httpurl.getURL().toString());
 		String s = u.Reader();
+		if (s.equals("error"))
+			return "error";
 		setvsev(s);
 		return s;
 	}

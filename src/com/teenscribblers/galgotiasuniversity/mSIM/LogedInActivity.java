@@ -1,5 +1,11 @@
 package com.teenscribblers.galgotiasuniversity.mSIM;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.jsoup.Jsoup;
@@ -24,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -40,13 +47,14 @@ public class LogedInActivity extends SherlockActivity {
 	ImageView dp;
 	Button options;
 	SessionManagment session;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_loged_in);
 		session = new SessionManagment(LogedInActivity.this);
 		session.checkLogin();
-		//Log.d("cookie_logeddin", session.getCookie());
+		// Log.d("cookie_logeddin", session.getCookie());
 		// Show the Up button in the action bar.
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		UrlConnectionParms.ids = new ArrayList<String>();
@@ -58,14 +66,32 @@ public class LogedInActivity extends SherlockActivity {
 		idlist();
 		titles();
 		list = (ListView) findViewById(R.id.listView_personal);
-		if (UrlConnectionParms.idvalues!=null)
-			new Info().execute();
-		else {
+		// dvsv
+		try {
+			FileInputStream input = openFileInput("user.txt"); // Open input
+																// stream
+			DataInputStream din = new DataInputStream(input);
+			int sz = din.readInt(); // Read line count
+			for (int i = 0; i < sz; i++) { // Read lines
+				String line = din.readUTF();
+				UrlConnectionParms.idvalues.add(line);
+			}
+			din.close();
 			pb.setVisibility(View.GONE);
 			adapter = new CardsAdapter(getBaseContext(),
 					android.R.layout.simple_list_item_1);
 			list.setAdapter(adapter);
+			ImageLoader imgLoader = new ImageLoader(getBaseContext());
+			imgLoader.DisplayImage(UrlConnectionParms.StudentImagebase
+					+ UrlConnectionParms.idvalues.get(0) + ".jpg",
+					R.drawable.abs__toast_frame, dp);
+		} catch (FileNotFoundException e) {
+			new Info().execute();
+		} catch (IOException e) {
+			Toast.makeText(this, "Error Reading file!", Toast.LENGTH_SHORT)
+					.show();
 		}
+		// vdsvs
 
 		options.setOnClickListener(new View.OnClickListener() {
 
@@ -74,7 +100,8 @@ public class LogedInActivity extends SherlockActivity {
 				// TODO Auto-generated method stub
 				Intent i = new Intent(getBaseContext(), OptionsActivity.class);
 				startActivity(i);
-				overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
+				overridePendingTransition(R.anim.push_down_in,
+						R.anim.push_down_out);
 			}
 		});
 	}
@@ -94,7 +121,7 @@ public class LogedInActivity extends SherlockActivity {
 			UrlConnectionMethods u = new UrlConnectionMethods(
 					getApplicationContext());
 			String s = u.get(UrlConnectionParms.PersonalInfoString);
-			if (s.equals("Error")) {
+			if (s.equals("error")) {
 				return "Error";
 			}
 			Document document = Jsoup.parse(s);
@@ -110,6 +137,22 @@ public class LogedInActivity extends SherlockActivity {
 				Log.d("values", doc.text());
 				i++;
 			}
+			try {
+				FileOutputStream output = openFileOutput("user.txt",
+						MODE_PRIVATE);
+				DataOutputStream dout = new DataOutputStream(output);
+				dout.writeInt(UrlConnectionParms.idvalues.size()); // Save line
+																	// count
+				for (String line : UrlConnectionParms.idvalues)
+					// Save lines
+					dout.writeUTF(line);
+				dout.flush(); // Flush stream ...
+				dout.close(); // ... and close.
+			} catch (FileNotFoundException e) {
+				return "Error";
+			} catch (IOException e) {
+				return "Error";
+			}
 			return s;
 
 		}
@@ -119,10 +162,9 @@ public class LogedInActivity extends SherlockActivity {
 			super.onPostExecute(result);
 			pb.setVisibility(View.GONE);
 			if (result.equals("Error")) {
-				AlertDialogManager a = new AlertDialogManager();
-				a.showAlertDialog(LogedInActivity.this, "Error!",
-						"Please Login Again!");
-				
+				AlertDialogManager.showAlertDialog(LogedInActivity.this,
+						"Error!", "Error retriving data!");
+
 			} else {
 				adapter = new CardsAdapter(getBaseContext(),
 						android.R.layout.simple_list_item_1);
@@ -283,7 +325,7 @@ public class LogedInActivity extends SherlockActivity {
 			return true;
 		case R.id.action_logout:
 			session.logoutUser();
-			Intent i=new Intent(LogedInActivity.this,LoginActivity.class);
+			Intent i = new Intent(LogedInActivity.this, LoginActivity.class);
 			startActivity(i);
 			return true;
 		}

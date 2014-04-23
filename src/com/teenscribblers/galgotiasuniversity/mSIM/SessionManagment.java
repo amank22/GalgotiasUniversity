@@ -1,9 +1,13 @@
 package com.teenscribblers.galgotiasuniversity.mSIM;
 
+import java.io.File;
+
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.os.Handler;
+
+import com.teenscribblers.galgotiasuniversity.AlertDialogManager;
 
 public class SessionManagment {
 	// Shared Preferences
@@ -24,13 +28,16 @@ public class SessionManagment {
 	// All Shared Preferences Keys
 
 	// Cookie (make variable public to access from outside)
-	public static final String KEY_COOKIE = "";
+	public static final String KEY_COOKIE = "Cookie_Key";
+
+	// private boolean status = false;
 
 	// Constructor
 	public SessionManagment(Context context) {
-		this._context = context;
+		_context = context;
 		pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
 		editor = pref.edit();
+
 	}
 
 	/**
@@ -42,6 +49,7 @@ public class SessionManagment {
 		editor.putString(KEY_COOKIE, cookie);
 		// commit changes
 		editor.commit();
+
 	}
 
 	/**
@@ -51,9 +59,15 @@ public class SessionManagment {
 	public void checkLogin() {
 		// Check login status
 		if (pref.getString(KEY_COOKIE, "").equals("")) {
-			logoutUser();
-		}
+			new Handler().post(new Runnable() {
 
+				@Override
+				public void run() {
+					AlertDialogManager.showAlertDialog(_context, "error",
+							"Please Login Again to continue..");
+				}
+			});
+		}
 	}
 
 	public String getCookie() {
@@ -65,20 +79,11 @@ public class SessionManagment {
 	 * */
 	public void logoutUser() {
 		// Clearing all data from Shared Preferences
-		createLoginSession("");
+		// createLoginSession("");
 		editor.clear();
 		editor.commit();
-		UrlConnectionParms u=new UrlConnectionParms(_context);
-		u.disconnect();
-		// After logout redirect user to Login Activity
-		Intent i = new Intent(_context, LoginActivity.class);
-		// Closing all the Activities
-		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-		// Add new Flag to start new Activity
-		i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-		// Staring Login Activity
-		_context.startActivity(i);
+		File dir = _context.getFilesDir();
+		File file = new File(dir, "user.txt");
+		file.delete();
 	}
 }

@@ -975,16 +975,19 @@ containing a value of this type.
         public static final int list_selector=0x7f02007b;
         public static final int list_selectornews=0x7f02007c;
         public static final int login_bg=0x7f02007d;
-        public static final int news_icon=0x7f02007e;
-        public static final int notification=0x7f02007f;
-        public static final int spinner=0x7f020080;
-        public static final int swiperight=0x7f020081;
-        public static final int teenscribblers=0x7f020082;
-        public static final int ts_gu8=0x7f020083;
-        public static final int ts_knowgu=0x7f020084;
-        public static final int ts_news=0x7f020085;
-        public static final int ts_slideshow=0x7f020086;
-        public static final int ts_websim=0x7f020087;
+        public static final int mood_sad=0x7f02007e;
+        public static final int news_icon=0x7f02007f;
+        public static final int notification=0x7f020080;
+        public static final int spinner=0x7f020081;
+        public static final int swiperight=0x7f020082;
+        public static final int teenscribblers=0x7f020083;
+        public static final int ts_blue=0x7f020084;
+        public static final int ts_green=0x7f020085;
+        public static final int ts_gu8=0x7f020086;
+        public static final int ts_knowgu=0x7f020087;
+        public static final int ts_news=0x7f020088;
+        public static final int ts_slideshow=0x7f020089;
+        public static final int ts_websim=0x7f02008a;
     }
     public static final class id {
         public static final int abs__action_bar=0x7f070020;
@@ -1026,79 +1029,81 @@ containing a value of this type.
         public static final int abs__textButton=0x7f070013;
         public static final int abs__title=0x7f07001b;
         public static final int abs__up=0x7f07000b;
-        public static final int action_about=0x7f07006f;
-        public static final int action_logout=0x7f070070;
+        public static final int action_about=0x7f070071;
+        public static final int action_logout=0x7f070072;
         public static final int adView_1=0x7f070036;
         public static final int adView_2=0x7f070038;
         public static final int adView_3=0x7f07003a;
         public static final int adView_4=0x7f07003c;
         public static final int adView_5=0x7f07003e;
-        public static final int adView_6=0x7f070058;
-        public static final int adView_7=0x7f07005a;
+        public static final int adView_6=0x7f070059;
+        public static final int adView_7=0x7f07005b;
         public static final int adView_att_1=0x7f070033;
-        public static final int adView_option_1=0x7f07004d;
-        public static final int adView_option_2=0x7f070051;
-        public static final int adView_option_3=0x7f07004f;
+        public static final int adView_option_1=0x7f07004e;
+        public static final int adView_option_2=0x7f070052;
+        public static final int adView_option_3=0x7f070050;
         public static final int attendance_monthly=0x7f07003d;
         public static final int attendance_semester=0x7f070039;
         public static final int attendance_subjects=0x7f07003b;
         public static final int attendance_todays=0x7f070037;
-        public static final int button_Results=0x7f070050;
-        public static final int button_attendance=0x7f07004e;
+        public static final int button_Results=0x7f070051;
+        public static final int button_attendance=0x7f07004f;
         public static final int button_options=0x7f070042;
-        public static final int content_frame=0x7f07004b;
-        public static final int description=0x7f070061;
+        public static final int content_frame=0x7f07004c;
+        public static final int description=0x7f070063;
         public static final int disableHome=0x7f070009;
-        public static final int drawer_layout=0x7f07004a;
+        public static final int drawer_layout=0x7f07004b;
         public static final int edit_query=0x7f070026;
         public static final int email=0x7f070046;
         public static final int homeAsUp=0x7f070006;
-        public static final int imageView1=0x7f070062;
-        public static final int left_drawer=0x7f07004c;
+        public static final int imageView1=0x7f070064;
+        public static final int left_drawer=0x7f07004d;
         public static final int listMode=0x7f070002;
         public static final int listView_attendance=0x7f070034;
         public static final int listView_personal=0x7f070044;
-        public static final int listView_result=0x7f070052;
+        public static final int listView_result=0x7f070053;
         public static final int login=0x7f070048;
         public static final int login_form=0x7f070045;
         public static final int normal=0x7f070001;
         public static final int pager=0x7f07003f;
         public static final int pager_title_strip=0x7f070040;
         public static final int password=0x7f070047;
-        public static final int pdate=0x7f070069;
-        public static final int progressBar1=0x7f070067;
+        public static final int pdate=0x7f07006b;
+        public static final int progressBar1=0x7f070069;
+        public static final int progressBar_login=0x7f070049;
         public static final int progressBar_personal=0x7f070043;
-        public static final int refresh=0x7f07006e;
-        public static final int result_sem_1=0x7f070053;
-        public static final int result_sem_2=0x7f070054;
-        public static final int result_sem_3=0x7f070055;
-        public static final int result_sem_4=0x7f070056;
-        public static final int result_sem_5=0x7f070057;
-        public static final int result_sem_6=0x7f070059;
+        public static final int refresh=0x7f070070;
+        public static final int result_sem_1=0x7f070054;
+        public static final int result_sem_2=0x7f070055;
+        public static final int result_sem_3=0x7f070056;
+        public static final int result_sem_4=0x7f070057;
+        public static final int result_sem_5=0x7f070058;
+        public static final int result_sem_6=0x7f07005a;
         public static final int scrollView1=0x7f070035;
         public static final int showCustom=0x7f070008;
         public static final int showHome=0x7f070005;
         public static final int showTitle=0x7f070007;
-        public static final int sidemenuicons=0x7f070060;
-        public static final int sign_in_button=0x7f070049;
+        public static final int sidemenuicons=0x7f070062;
+        public static final int sign_in_button=0x7f07004a;
         public static final int student_pic=0x7f070041;
         public static final int tabMode=0x7f070003;
         public static final int textView1=0x7f070032;
-        public static final int textView_absent=0x7f07005d;
-        public static final int textView_class_type=0x7f07006c;
-        public static final int textView_grade=0x7f07006a;
-        public static final int textView_perc=0x7f07005f;
-        public static final int textView_present=0x7f07005c;
-        public static final int textView_status=0x7f07006d;
-        public static final int textView_subject=0x7f07005b;
-        public static final int textView_time_slot=0x7f07006b;
-        public static final int textView_total=0x7f07005e;
-        public static final int thumbnews=0x7f070068;
-        public static final int title=0x7f070064;
+        public static final int textView_absent=0x7f07005e;
+        public static final int textView_class_type=0x7f07006e;
+        public static final int textView_grade=0x7f07006c;
+        public static final int textView_perc=0x7f070060;
+        public static final int textView_present=0x7f07005d;
+        public static final int textView_status=0x7f07006f;
+        public static final int textView_subject=0x7f07005c;
+        public static final int textView_time_slot=0x7f07006d;
+        public static final int textView_total=0x7f07005f;
+        public static final int textViewdialog=0x7f070061;
+        public static final int thumbnews=0x7f07006a;
+        public static final int title=0x7f070066;
         public static final int useLogo=0x7f070004;
-        public static final int value=0x7f070065;
-        public static final int view_flipper_top=0x7f070063;
-        public static final int webView1=0x7f070066;
+        public static final int value=0x7f070067;
+        public static final int view_flipper_top=0x7f070065;
+        public static final int webView1=0x7f070068;
         public static final int wrap_content=0x7f070000;
     }
     public static final class integer {
@@ -1142,16 +1147,17 @@ containing a value of this type.
         public static final int detailsapproval=0x7f030021;
         public static final int detailscampuslife=0x7f030022;
         public static final int detailswelcome=0x7f030023;
-        public static final int drawer_items=0x7f030024;
-        public static final int flipper_fragment=0x7f030025;
-        public static final int list_msim=0x7f030026;
-        public static final int listmain=0x7f030027;
-        public static final int podcast=0x7f030028;
-        public static final int recent_activity_news=0x7f030029;
-        public static final int result_list_item=0x7f03002a;
-        public static final int sherlock_spinner_dropdown_item=0x7f03002b;
-        public static final int sherlock_spinner_item=0x7f03002c;
-        public static final int todayslistitem=0x7f03002d;
+        public static final int dialog=0x7f030024;
+        public static final int drawer_items=0x7f030025;
+        public static final int flipper_fragment=0x7f030026;
+        public static final int list_msim=0x7f030027;
+        public static final int listmain=0x7f030028;
+        public static final int podcast=0x7f030029;
+        public static final int recent_activity_news=0x7f03002a;
+        public static final int result_list_item=0x7f03002b;
+        public static final int sherlock_spinner_dropdown_item=0x7f03002c;
+        public static final int sherlock_spinner_item=0x7f03002d;
+        public static final int todayslistitem=0x7f03002e;
     }
     public static final class menu {
         public static final int listmenu=0x7f0c0000;
@@ -1342,15 +1348,6 @@ containing a value of this type.
         /** 
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
-
-
-
-
-
-
-
-
-
     
 
             Theme customizations available in newer API levels can go in
@@ -1417,6 +1414,7 @@ containing a value of this type.
         public static final int TextAppearance_Sherlock_Widget_PopupMenu_Large=0x7f0b0040;
         public static final int TextAppearance_Sherlock_Widget_PopupMenu_Small=0x7f0b0042;
         public static final int TextAppearance_Sherlock_Widget_TextView_SpinnerItem=0x7f0b0044;
+        public static final int Theme_D1NoTitleDim=0x7f0b005d;
         public static final int Theme_Sherlock=0x7f0b0054;
         public static final int Theme_Sherlock_Light=0x7f0b0055;
         public static final int Theme_Sherlock_Light_DarkActionBar=0x7f0b0056;

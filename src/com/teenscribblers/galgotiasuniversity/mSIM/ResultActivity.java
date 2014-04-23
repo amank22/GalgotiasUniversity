@@ -61,9 +61,16 @@ public class ResultActivity extends SherlockActivity {
 		String content = getIntent().getStringExtra("type_result");
 		typevalue = content;
 		list = (ListView) findViewById(R.id.listView_result);
-		new Result().execute();
+		if (savedInstanceState != null) {
+			data = (String[][]) savedInstanceState
+					.getSerializable("data_array");
+			count = savedInstanceState.getInt("count");
+			adapter = new CardsAdapter(getBaseContext(),
+					android.R.layout.simple_list_item_1);
+			list.setAdapter(adapter);
+		} else
+			new Result().execute();
 		mAdView1 = (AdView) findViewById(R.id.adView_att_1);
-
 		mAdView1.setAdListener(new ToastAdListener(this));
 		mAdView1.loadAd(new AdRequest.Builder().build());
 
@@ -74,6 +81,14 @@ public class ResultActivity extends SherlockActivity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getSupportMenuInflater().inflate(R.menu.user, menu);
 		return true;
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		// TODO Auto-generated method stub
+		super.onSaveInstanceState(outState);
+		outState.putSerializable("data_array", data);
+		outState.putInt("count", count);
 	}
 
 	@Override
@@ -97,12 +112,16 @@ public class ResultActivity extends SherlockActivity {
 			super.onPreExecute();
 			p = new ProgressDialog(ResultActivity.this);
 			p.setMessage("Finding Your Result..");
+			p.setCanceledOnTouchOutside(false);
 			p.show();
 		}
 
 		@Override
 		protected String doInBackground(String... params) {
 			String s = Result_Network();
+			if (s.equals("Error")) {
+				return "Error";
+			}
 			Document doc = Jsoup.parse(s);
 
 			Element table = doc.getElementById("MCPH1_SCPH_gvExamResult");
@@ -131,9 +150,8 @@ public class ResultActivity extends SherlockActivity {
 			super.onPostExecute(result);
 			p.dismiss();
 			if (result.equals("Error")) {
-				AlertDialogManager a = new AlertDialogManager();
-				a.showAlertDialog(ResultActivity.this, "Error!",
-						"Please Login Again!");
+				AlertDialogManager.showAlertDialog(ResultActivity.this,
+						"Error!", "Please Login Again!");
 			} else {
 				adapter = new CardsAdapter(getBaseContext(),
 						android.R.layout.simple_list_item_1);
@@ -146,6 +164,9 @@ public class ResultActivity extends SherlockActivity {
 		UrlConnectionMethods u = new UrlConnectionMethods(
 				getApplicationContext());
 		String p = u.get(UrlConnectionParms.ResultString);
+		if (p.equals("error")) {
+			return "Error";
+		}
 		// Log.e("Atten", p);
 		Document document = Jsoup.parse(p);
 		UrlConnectionParms.viewstate = document.select("#__VIEWSTATE").attr(
@@ -171,7 +192,9 @@ public class ResultActivity extends SherlockActivity {
 				"ctl00$ctl00$MCPH1$SCPH$btnRun", "Show"));
 
 		String s = u.Posturl(nameValuePair, UrlConnectionParms.ResultString);
-
+		if (s.equals("error")) {
+			return "Error";
+		}
 		return s;
 	}
 
@@ -236,7 +259,6 @@ public class ResultActivity extends SherlockActivity {
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		mAdView1.pause();
-
 		super.onPause();
 	}
 

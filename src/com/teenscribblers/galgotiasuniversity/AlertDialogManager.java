@@ -1,12 +1,10 @@
 package com.teenscribblers.galgotiasuniversity;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
+import com.teenscribblers.galgotiasuniversity.R.style;
 
-import com.teenscribblers.galgotiasuniversity.mSIM.LoginActivity;
-import com.teenscribblers.galgotiasuniversity.mSIM.SessionManagment;
+import android.app.Dialog;
+import android.content.Context;
+import android.widget.TextView;
 
 public class AlertDialogManager {
 	/**
@@ -19,29 +17,14 @@ public class AlertDialogManager {
 	 * @param message
 	 *            - alert message
 	 * */
-	public void showAlertDialog(final Context context, String title,
+	public static void showAlertDialog(Context context, String title,
 			String message) {
-		AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-
-		// Setting Dialog Title
-		alertDialog.setTitle(title);
-
-		// Setting Dialog Message
-		alertDialog.setMessage(message);
-
-		alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-				new DialogInterface.OnClickListener() {
-
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						// TODO Auto-generated method stub
-						SessionManagment s=new SessionManagment(context);
-						s.logoutUser();
-						Intent i = new Intent(context, LoginActivity.class);
-						context.startActivity(i);
-					}
-				});
-		// Showing Alert Message
-		alertDialog.show();
+		Dialog d = new Dialog(context,style.Theme_D1NoTitleDim);
+		d.setContentView(R.layout.dialog);
+		TextView t = (TextView) d.findViewById(R.id.textViewdialog);
+		t.setText(message);
+		d.setCancelable(true);
+		d.setCanceledOnTouchOutside(true);
+		d.show();
 	}
 }

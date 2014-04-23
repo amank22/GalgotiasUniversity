@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@drawable/card_red"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/textViewdialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:drawableTop="@drawable/mood_sad"
+        android:text="Oops!!Error"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+   
+
+</LinearLayout>

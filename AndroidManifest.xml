@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.teenscribblers.galgotiasuniversity"
-    android:versionCode="3"
-    android:versionName="1.2-punni" >
+    android:versionCode="5"
+    android:versionName="1.4" >
 
     <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -60,10 +60,10 @@
         <activity
             android:name="com.teenscribblers.galgotiasuniversity.AboutActivity"
             android:label="@string/title_activity_about"
-            android:parentActivityName="com.teenscribblers.galgotiasuniversity.MainActivity" >
+            android:parentActivityName="com.teenscribblers.galgotiasuniversity.mSIM.LoginActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.teenscribblers.galgotiasuniversity.MainActivity" />
+                android:value="com.teenscribblers.galgotiasuniversity.mSIM.LoginActivity" />
         </activity>
         <activity
             android:name="com.teenscribblers.galgotiasuniversity.mSIM.LoginActivity"

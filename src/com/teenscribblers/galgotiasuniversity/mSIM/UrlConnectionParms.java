@@ -14,8 +14,6 @@ import java.util.List;
 
 import org.apache.http.NameValuePair;
 
-import com.teenscribblers.galgotiasuniversity.AlertDialogManager;
-
 import android.content.Context;
 import android.util.Log;
 
@@ -33,39 +31,38 @@ public class UrlConnectionParms {
 	public static boolean loginstat = false;
 	public static ArrayList<NameValuePair> cookie = new ArrayList<NameValuePair>();
 	public static URL currenturl;
-	//public static String cookieString = "";
-	public static List<String> ids=null;
-	public static List<String> idvalues=null;
-	public static List<String> titletext=null;
+	// public static String cookieString = "";
+	public static List<String> ids = null;
+	public static List<String> idvalues = null;
+	public static List<String> titletext = null;
 	SessionManagment session;
-	private static AlertDialogManager alertcreate;
-	private Context context;
 
 	public UrlConnectionParms(Context context) {
 		// TODO Auto-generated constructor stub
 		Log.d("Tag_GU", "in urlconparms constructor");
-		session=new SessionManagment(context);
-		this.context=context;
-
+		session = new SessionManagment(context);
 	}
 
-	public void InitConnection(String type, String url) {
+	public String InitConnection(String type, String url) {
+		
 		Log.d("Tag_GU", "in init connection");
 		try {
 			httpurl.setRequestMethod(type);
 		} catch (ProtocolException e) {
-			alertcreate.showAlertDialog(context.getApplicationContext(),"Error!","Connection Error");
-			//e.printStackTrace();
+			e.printStackTrace();
+			return "error";
 		}
-
-		//httpurl.setReadTimeout(timeout);
+		httpurl.setRequestProperty("Proxy-Connection", "keep-alive");
+		// httpurl.setReadTimeout(timeout);
 		httpurl.setUseCaches(true);
 		httpurl.setDoInput(true);
 		httpurl.setDoOutput(true);
 		httpurl.setInstanceFollowRedirects(false);
 		httpurl.setChunkedStreamingMode(0);
-		if(!session.getCookie().equals(""))
-		httpurl.setRequestProperty("Cookie", session.getCookie());
+		if (!session.getCookie().equals(""))
+			httpurl.setRequestProperty("Cookie", session.getCookie());
+		
+		return "ok";
 	}
 
 	public String Reader() {
@@ -75,11 +72,11 @@ public class UrlConnectionParms {
 			reader = new BufferedReader(new InputStreamReader(
 					httpurl.getInputStream(), "UTF-8"));
 		} catch (UnsupportedEncodingException e1) {
-			alertcreate.showAlertDialog(context.getApplicationContext(),"Error!","Connection Error");
-		//	e1.printStackTrace();
+			return "error";
+			// e1.printStackTrace();
 		} catch (IOException e1) {
-			alertcreate.showAlertDialog(context.getApplicationContext().getApplicationContext(),"Error!","Connection Error");
-			//e1.printStackTrace();
+			return "error";
+			// e1.printStackTrace();
 		}
 		String webpage = "", data = "";
 		try {
@@ -87,50 +84,51 @@ public class UrlConnectionParms {
 				webpage += data + "\n";
 			}
 		} catch (IOException e) {
-			alertcreate.showAlertDialog(context.getApplicationContext(),"Error!","Connection Error");
-		//	e.printStackTrace();
+			e.printStackTrace();
+			return "error";
 		}
 		return webpage;
 	}
 
-	public void disconnect() {
+	public static void disconnect() {
 		httpurl.disconnect();
 	}
 
-	public void openconnect(String url) {
+	public String openconnect(String url) {
 		URL u = null;
 		try {
 			u = new URL(url);
 		} catch (MalformedURLException e) {
-			alertcreate.showAlertDialog(context.getApplicationContext(),"Error!","Connection Error");
-			//e.printStackTrace();
+			e.printStackTrace();
+			return "error";
 		}
 		try {
 			httpurl = (HttpURLConnection) u.openConnection();
 		} catch (IOException e) {
-			alertcreate.showAlertDialog(context.getApplicationContext(),"Error!","Connection Error");
-			//e.printStackTrace();
+			e.printStackTrace();
+			return "error";
 		}
 		currenturl = u;
+		return "ok";
 	}
 
-	public void connect() {
+	public String connect() {
 		try {
 			httpurl.connect();
 		} catch (IOException e) {
-			alertcreate.showAlertDialog(context.getApplicationContext(),"Error!","Connection Error");
-			//e.printStackTrace();
+			e.printStackTrace();
+			return "error";
 		}
+		return "ok";
 	}
 
 	public int requestcode() {
 		try {
-
 			return httpurl.getResponseCode();
 		} catch (IOException e) {
 			return 0;
 		}
-		
+
 	}
 
 	public boolean checkredirect() {
@@ -140,7 +138,7 @@ public class UrlConnectionParms {
 			if (status == HttpURLConnection.HTTP_MOVED_TEMP)
 				return true;
 		}
-		
+
 		return false;
 	}
 
@@ -156,15 +154,15 @@ public class UrlConnectionParms {
 			try {
 				result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
 			} catch (UnsupportedEncodingException e) {
-				alertcreate.showAlertDialog(context.getApplicationContext().getApplicationContext(),"Error!","Connection Error");
-			//	e.printStackTrace();
+				e.printStackTrace();
+				return "error";
 			}
 			result.append("=");
 			try {
 				result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
 			} catch (UnsupportedEncodingException e) {
-				alertcreate.showAlertDialog(context.getApplicationContext().getApplicationContext(),"Error!","Connection Error");
-				//e.printStackTrace();
+				e.printStackTrace();
+				return "error";
 			}
 
 		}

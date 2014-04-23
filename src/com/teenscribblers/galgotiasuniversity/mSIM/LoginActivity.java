@@ -6,21 +6,18 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 
 import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
+import com.teenscribblers.galgotiasuniversity.AlertDialogManager;
 import com.teenscribblers.galgotiasuniversity.Connection_detect;
 import com.teenscribblers.galgotiasuniversity.R;
 
@@ -33,9 +30,7 @@ public class LoginActivity extends SherlockActivity {
 	 * A dummy authentication store containing known user names and passwords.
 	 * TODO: remove after connecting to a real authentication system.
 	 */
-	ProgressDialog p;
-	public static final String EXTRA_EMAIL = "teenscribblers@something.com";
-
+	ProgressBar p;
 	/**
 	 * Keep track of the login task to ensure we can cancel it if requested.
 	 */
@@ -52,11 +47,6 @@ public class LoginActivity extends SherlockActivity {
 	int statusCode;
 	private SessionManagment session;
 
-	public LoginActivity() {
-		// TODO Auto-generated constructor stub
-
-	}
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -67,28 +57,10 @@ public class LoginActivity extends SherlockActivity {
 			startActivity(i);
 		}
 		// Set up the login form.
-		mUsername = getIntent().getStringExtra(EXTRA_EMAIL);
+		p = (ProgressBar) findViewById(R.id.progressBar_login);
 		mUserView = (EditText) findViewById(R.id.email);
 		mUserView.setText(mUsername);
 		mPasswordView = (EditText) findViewById(R.id.password);
-		mPasswordView
-				.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-					@Override
-					public boolean onEditorAction(TextView textView, int id,
-							KeyEvent keyEvent) {
-						if (id == R.id.login || id == EditorInfo.IME_NULL) {
-							attemptLogin();
-							return true;
-						}
-						return false;
-					}
-				});
-
-		// mLoginFormView = findViewById(R.id.login_form);
-		// mLoginStatusView = findViewById(R.id.login_status);
-		// mLoginStatusMessageView = (TextView)
-		// findViewById(R.id.login_status_message);
-
 		findViewById(R.id.sign_in_button).setOnClickListener(
 				new View.OnClickListener() {
 					@Override
@@ -98,7 +70,13 @@ public class LoginActivity extends SherlockActivity {
 						Boolean isInternetPresent = cd.isConnectingToInternet();
 						if (isInternetPresent)
 							attemptLogin();
+						else {
+							AlertDialogManager.showAlertDialog(
+									LoginActivity.this, "Error!",
+									"No Internet!");
+						}
 					}
+
 				});
 	}
 
@@ -134,10 +112,6 @@ public class LoginActivity extends SherlockActivity {
 			mPasswordView.setError(getString(R.string.error_field_required));
 			focusView = mPasswordView;
 			cancel = true;
-		} else if (mPassword.length() < 4) {
-			mPasswordView.setError(getString(R.string.error_invalid_password));
-			focusView = mPasswordView;
-			cancel = true;
 		}
 
 		// Check for a valid username.
@@ -157,7 +131,7 @@ public class LoginActivity extends SherlockActivity {
 			// mLoginStatusMessageView.setText(R.string.login_progress_signing_in);
 
 			mAuthTask = new UserLoginTask();
-			mAuthTask.execute((Void) null);
+			mAuthTask.execute();
 		}
 	}
 
@@ -171,40 +145,31 @@ public class LoginActivity extends SherlockActivity {
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
 			super.onPreExecute();
-			p = new ProgressDialog(LoginActivity.this,
-					ProgressDialog.STYLE_HORIZONTAL);
-			p.setTitle("Please Wait..");
-			p.setMessage("Signing In");
-			p.setCanceledOnTouchOutside(false);
-			p.show();
+			p.setVisibility(View.VISIBLE);
 		}
 
 		@Override
 		protected Boolean doInBackground(Void... params) {
 			// TODO: attempt authentication against a network service.
-			login();
-			return true;
+			boolean a = login();
+			return a;
 		}
 
 		@Override
 		protected void onPostExecute(final Boolean success) {
-			// mAuthTask = null;
-			// showProgress(false);
+			mAuthTask = null;
 			Log.d("Tag_GU", "in post execute");
-			p.dismiss();
+			p.setVisibility(View.INVISIBLE);
 			Log.d("Tag_GU", String.valueOf(UrlConnectionParms.loginstat));
-			if (UrlConnectionParms.loginstat) {
+			if (success) {
 				Intent i = new Intent(LoginActivity.this, LogedInActivity.class);
 				startActivity(i);
-
 			}
 
 			else {
 				mPasswordView
 						.setError(getString(R.string.error_incorrect_password));
 				mPasswordView.requestFocus();
-				mAuthTask = null;
-
 			}
 		}
 
@@ -214,7 +179,7 @@ public class LoginActivity extends SherlockActivity {
 		}
 	}
 
-	void login() {
+	boolean login() {
 		Log.d("Tag_GU", "in login");
 		// Building post parameters, key and value pair
 		nameValuePair = new ArrayList<NameValuePair>();
@@ -236,7 +201,12 @@ public class LoginActivity extends SherlockActivity {
 		// h.loginrequest(nameValuePair, "http://122.160.168.158/iSIM/Login");
 		UrlConnectionMethods conn = new UrlConnectionMethods(
 				getApplicationContext());
-		conn.LoginUrl(nameValuePair, UrlConnectionParms.LoginString);
+		String s = conn.LoginUrl(nameValuePair, UrlConnectionParms.LoginString);
+		if(s!=null){
+		if (s.equals("error"))
+			return false;
+		}
+		return true;
 	}
 
 }
