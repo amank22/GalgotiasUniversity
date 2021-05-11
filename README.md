@@ -1,3 +1,5 @@
+# :stop_sign: :rotating_light: No longer works & maintained. Marking it as read-only.
+
 ![alt tag](https://github.com/amank22/GalgotiasUniversity/raw/master/res/drawable-nodpi/ts_gu8.jpg)
 
 Redesign of the old "Galgotias University" app.
